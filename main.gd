@@ -2,7 +2,6 @@ extends Node3D
 
 @onready var mesh = $MeshInstance3D
 @onready var player = $Player
-@onready var marker = $Marker3D
 
 signal obstacle_should_spawn(location)
 
@@ -10,9 +9,10 @@ func _ready():
 	
 	$ObstacleContainer.connect("obstacle_added",Callable($AStarManager,"handle_obstacle_added"))
 	$ObstacleContainer.connect("obstacle_removed",Callable($AStarManager,"handle_obstacle_removed"))
-
+	player.connect("got_stuck", player_got_stuck)
 var _mouse_position = Vector2()
 
+	
 func get_mouse_target() -> Dictionary:
 	var camera = $Camera3D
 	var mousePos = get_viewport().get_mouse_position()
@@ -47,5 +47,6 @@ func _process(delta):
 		if result != null and not result.is_empty():
 			player.update_path($AStarManager.find_path(player.position, result.position))
 	
-	
-	
+
+func player_got_stuck():
+	player.update_path($AStarManager.find_path(player.position, player.target_path_end))

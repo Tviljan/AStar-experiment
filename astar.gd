@@ -4,6 +4,9 @@ extends Node3D
 @export var should_draw_cubes := false
 @export var mesh : MeshInstance3D
 
+#true, if you want to disable/enabled adjacent points
+# of an obstacle.
+@export var enable_adjanced_points := false
 var aabb : AABB
 
 var grid_step := 1
@@ -93,10 +96,12 @@ func handle_obstacle_added(obstacle: Node3D):
 	var normalized_origin = obstacle.global_transform.origin
 	normalized_origin.y = grid_y
 
-# Uncomment this line if you want to disable/enabled adjacent points
-# of an obstacle.
-	var adjacent_points: Array = _get_adjacent_points(normalized_origin)
-#	var adjacent_points: Array = []
+	var adjacent_points :Array
+	if (enable_adjanced_points):
+		adjacent_points = _get_adjacent_points(normalized_origin)
+	else:
+		adjacent_points = []
+		
 	var point_key = world_to_astar(normalized_origin)
 	print ("point key: ", point_key)
 
@@ -115,10 +120,11 @@ func handle_obstacle_removed(obstacle: Node3D):
 	var normalized_origin = obstacle.global_transform.origin
 	normalized_origin.y = grid_y
 
-# Uncomment this line if you want to disable/enabled adjacent points
-# of an obstacle.
-	var adjacent_points: Array = _get_adjacent_points(normalized_origin)
-#	var adjacent_points: Array = []
+	var adjacent_points :Array
+	if (enable_adjanced_points):
+		adjacent_points = _get_adjacent_points(normalized_origin)
+	else:
+		adjacent_points = []
 	var point_key = world_to_astar(normalized_origin)
 	var astar_id = points[point_key]
 	
