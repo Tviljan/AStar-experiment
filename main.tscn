@@ -1,0 +1,80 @@
+[gd_scene load_steps=15 format=3 uid="uid://trfep7v20rhm"]
+
+[ext_resource type="Script" path="res://main.gd" id="1_5bjho"]
+[ext_resource type="Script" path="res://camera.gd" id="2_a5ggl"]
+[ext_resource type="Script" path="res://astar.gd" id="3_m61ld"]
+[ext_resource type="Script" path="res://player.gd" id="4_6rchr"]
+[ext_resource type="Script" path="res://obstacle_container.gd" id="5_sfh2n"]
+
+[sub_resource type="Environment" id="Environment_mwy21"]
+ambient_light_source = 3
+ambient_light_color = Color(0.992157, 0.992157, 0.992157, 1)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_otm72"]
+
+[sub_resource type="Gradient" id="Gradient_5vpct"]
+colors = PackedColorArray(1, 0, 0, 1, 1, 0.419608, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_a3w8w"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_cuwlo"]
+color_ramp = SubResource("Gradient_5vpct")
+noise = SubResource("FastNoiseLite_a3w8w")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mo38b"]
+albedo_texture = SubResource("NoiseTexture2D_cuwlo")
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_h5xir"]
+material = SubResource("StandardMaterial3D_mo38b")
+
+[sub_resource type="BoxMesh" id="BoxMesh_yxto6"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kbhim"]
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("1_5bjho")
+
+[node name="Camera3D" type="Camera3D" parent="." groups=["Camera"]]
+transform = Transform3D(1, 0, 0, 0, 0.975806, 0.218637, 0, -0.218637, 0.975806, 0, 5.92197, 10.915)
+current = true
+script = ExtResource("2_a5ggl")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Camera3D"]
+offset_right = 253.0
+offset_bottom = 69.0
+text = "Move camera using WASD + Q/E
+Drop obstacle with Z
+Give Mr. Capsule a target path X"
+fit_content = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_mwy21")
+
+[node name="AStarManager" type="Node3D" parent="." node_paths=PackedStringArray("mesh")]
+script = ExtResource("3_m61ld")
+should_draw_cubes = true
+mesh = NodePath("../MeshInstance3D")
+
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.969005, 0)
+script = ExtResource("4_6rchr")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+shape = SubResource("CapsuleShape3D_otm72")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Player"]
+mesh = SubResource("CapsuleMesh_h5xir")
+
+[node name="ObstacleContainer" type="Node3D" parent="."]
+script = ExtResource("5_sfh2n")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(10, 0, 0, 0, 0.058, 0, 0, 0, 10, 0, 0, 0)
+mesh = SubResource("BoxMesh_yxto6")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D"]
+collision_layer = 17
+collision_mask = 17
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D"]
+shape = SubResource("BoxShape3D_kbhim")
