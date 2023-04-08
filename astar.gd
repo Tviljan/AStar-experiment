@@ -94,6 +94,7 @@ func _add_point(point: Vector3):
 	
 	# Draw a red cube for the point if should_draw_cubes is true
 	_create_nav_cube(point)
+	
 # Connect all adjacent points to each other in the navigation mesh
 func _connect_points():
 	# Loop through all points in the navigation mesh
@@ -191,7 +192,29 @@ func handle_obstacle_added(obstacle: Node3D) -> Vector3:
 		# Create a new Vector3 with the integer values of the x, y, and z coordinates
 	var pos := Vector3(int(point_key[0]), int(point_key[1]), int(point_key[2]))
 	return pos
+
+# Handle an obstacle being removed from the scene
+func handle_obstacle_removed(obstacle: Node3D):
+	var normalized_origin = obstacle.global_transform.origin
+	normalized_origin.y = grid_y
+
+	var adjacent_points :Array
+	if (enable_adjacent_points):
+		adjacent_points = _get_adjacent_points(normalized_origin)
+	else:
+		adjacent_points = []
+		
+	var point_key = _world_to_astar(normalized_origin)
+	var astar_id = points[point_key]
 	
+	adjacent_points.append(astar_id)
+
+	for point in adjacent_points:
+		if astar.is_point_disabled(point):
+			astar.set_point_disabled(point, false)
+			if should_draw_cubes:
+				get_child(point).material_override = green_material
+				
 # Given a start and end point in 3D space, find a path between them using A* algorithm
 # Params:
 # - from: The starting point (Vector3)
@@ -216,4 +239,3 @@ func _world_to_astar(world: Vector3) -> String:
 	
 	# Return the AStar point string for the snapped position
 	return "%d,%d,%d" % [x, y, z]
-

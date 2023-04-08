@@ -20,12 +20,16 @@ const time_to_wait_when_stuck_in_ms = 50
 var stuck_started = 0
 
 func _physics_process(delta: float) -> void:
+	
 	match state:
 		State.Idle:
+			print ("Idle")
 			pass
 		State.Moving:
+			print ("Moving")
 			_update_moving(delta)
 		State.Stuck:
+			print ("STuck")
 			_update_stuck(delta)
 
 func _update_moving(delta: float) -> void:
@@ -42,32 +46,34 @@ func _update_moving(delta: float) -> void:
 		new_velocity = lerp(current_velocity, Vector3.ZERO, lerp_weight)
 		
 	set_velocity(new_velocity)
-	var b = move_and_slide()
-	if (b and _is_stuck()):
-		state = State.Stuck
+	
+	
+	
 	current_velocity = velocity
-
+	
+	var hit = move_and_slide()
+	if (hit):
+		print ("hit but moving ",velocity)
+		if _is_stuck():
+			state = State.Stuck
+	
 func _is_stuck() -> bool:
-	if (current_velocity.floor() == Vector3.ZERO) and path.size() > 0:
+	print ("velocity ",velocity.round())
+	print ("velocityfloor() ",velocity.round().floor())
+	if (velocity.round().floor() == Vector3.ZERO) and path.size() > 0:
 		if stuck_started == 0:
+			print ("start stuck counter")
 			stuck_started = Time.get_ticks_msec()
 			
 		if Time.get_ticks_msec() - stuck_started > time_to_wait_when_stuck_in_ms:
 			print("not moving but still ways to go ",path.size())
+			stuck_started = 0
 			return true
-	stuck_started = 0
 	return false
 	
 func _update_stuck(delta: float) -> void:
-	if (current_velocity.floor() == Vector3.ZERO) and path.size() > 0:
-		if stuck_started == 0:
-			stuck_started = Time.get_ticks_msec()
-		if Time.get_ticks_msec() - stuck_started > time_to_wait_when_stuck_in_ms:
-			state = State.Idle
-			print("not moving but still ways to go ",path.size())
-			got_stuck.emit()
-	else:
-		stuck_started = 0
+	state = State.Idle
+	got_stuck.emit()
 
 func find_next_point_in_path() -> void:
 	if path.size() > 0:
