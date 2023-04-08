@@ -47,7 +47,7 @@ script = ExtResource("2_a5ggl")
 offset_right = 253.0
 offset_bottom = 69.0
 text = "Move camera using WASD + Q/E
-Drop obstacle with Z
+Drop obstacle with Z / L. mouse button
 Give Mr. Capsule a target path X"
 fit_content = true
 
