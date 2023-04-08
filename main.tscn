@@ -10,9 +10,6 @@
 ambient_light_source = 3
 ambient_light_color = Color(0.992157, 0.992157, 0.992157, 1)
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_otm72"]
-radius = 0.4
-
 [sub_resource type="Gradient" id="Gradient_5vpct"]
 colors = PackedColorArray(1, 0, 0, 1, 1, 0.419608, 0, 1)
 
@@ -27,6 +24,12 @@ albedo_texture = SubResource("NoiseTexture2D_cuwlo")
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_h5xir"]
 material = SubResource("StandardMaterial3D_mo38b")
+radius = 0.35
+height = 1.2
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_iewaj"]
+radius = 0.402365
+height = 1.25975
 
 [sub_resource type="BoxMesh" id="BoxMesh_yxto6"]
 
@@ -57,14 +60,16 @@ should_draw_cubes = true
 mesh = NodePath("../MeshInstance3D")
 
 [node name="Player" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.969005, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.239215, 0)
 script = ExtResource("4_6rchr")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
-shape = SubResource("CapsuleShape3D_otm72")
-
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.509908, 0)
 mesh = SubResource("CapsuleMesh_h5xir")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.509908, 0)
+shape = SubResource("CapsuleShape3D_iewaj")
 
 [node name="ObstacleContainer" type="Node3D" parent="."]
 script = ExtResource("5_sfh2n")

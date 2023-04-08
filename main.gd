@@ -30,12 +30,16 @@ func get_mouse_target() -> Dictionary:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey:
-
 		var result = get_mouse_target()
 		if result != null and not result.is_empty():
 			if event.is_action_pressed("ui_select"):
 				Debugger.draw_line_3d(result.position,result.position + Vector3.UP, Color.ORANGE)
 			elif event.is_action_pressed("drop_obstacle"):
+				$ObstacleContainer.handle_obstacle_should_spawn(result.position)				
+	elif event is InputEventMouseButton:
+		if event.is_action_pressed("drop_obstacle"):
+			var result = get_mouse_target()
+			if result != null and not result.is_empty():
 				$ObstacleContainer.handle_obstacle_should_spawn(result.position)
 			
 	

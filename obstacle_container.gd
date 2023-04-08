@@ -11,11 +11,11 @@ func create_obstacle(location: Vector3):
 	var obstacle_instance = OBSTACLE.instantiate()
 	add_child(obstacle_instance)
 	obstacle_instance.global_transform.origin = location
-	emit_signal("obstacle_added", obstacle_instance)
+	obstacle_added.emit(obstacle_instance)
 
 
 func delete_obstacle(obstacle: MeshInstance3D):
-	emit_signal("obstacle_removed", obstacle)
+	obstacle_removed.emit(obstacle)
 	obstacle.queue_free()
 
 
